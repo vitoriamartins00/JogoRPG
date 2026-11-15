@@ -13,7 +13,7 @@ import java.sql.Connection;
 import javax.swing.JOptionPane;
 
 /**
- *Classe responsável por gerenciar as opções do menu principal, permite que o
+ * classe responsável por gerenciar as opções do menu principal, permite que o
  * jogador crie um novo jogo, gerencie seus saves guardados ou encerra a sessão
  * @author vitoriamartins
  */
@@ -23,7 +23,7 @@ public class ControllerMenu {
     private final Connection conexao;
     
     /**
-     * Construtor classe ControllerMenu, inicializa o controlador do menu, associa 
+     * construtor classe ControllerMenu, inicializa o controlador do menu, associa 
      * a tela e faz a conexão com o banco de dados
      * @param telaMenu
      * @param jogador 
@@ -35,8 +35,8 @@ public class ControllerMenu {
     }
     
     /**
-     * Retorna a pagina do menu principal assosciada a este controlador
-     * @return 
+     * retorna a pagina do menu principal assosciada a este controlador
+     * @return a instancia de JFrameMenuJogo
      */
 
     public JFrameMenuJogo getTelaMenu() {

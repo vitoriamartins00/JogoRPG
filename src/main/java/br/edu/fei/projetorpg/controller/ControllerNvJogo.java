@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
- * Classe responsavel por admistrar a criacao de um novo personagem, permitindo
+ * classe responsavel por admistrar a criacao de um novo personagem, permitindo
  * ao jogador escolher dentre as classes, atribuir um nome, gravar os dados e 
  * iniciar a partida
  * @author vitoriamartins
@@ -30,7 +30,7 @@ public class ControllerNvJogo {
     private final Connection conexao;
     
     /**
-     * Construtor da classe ControllerNvJogo, inicializa o controlador associando
+     * construtor da classe ControllerNvJogo, inicializa o controlador associando
      * a pagina de criacao de um novo jogo, o jogador ativo e faz a conexao via
      * Singleton
      * @param viewNovoJogo
@@ -43,7 +43,7 @@ public class ControllerNvJogo {
     }
     
     /**
-     * Retorna a pagina de novo jogo
+     * retorna a pagina de novo jogo
      * @return 
      */
     public JFrameNovoJogo getViewNovoJogo() {
@@ -51,7 +51,7 @@ public class ControllerNvJogo {
     }
 
     /**
-     * Retorna o joagdor conectado à criação do personagem 
+     * retorna o joagdor conectado à criação do personagem 
      * @return 
      */
     public Jogador getJogador() {

@@ -19,7 +19,9 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 /**
- *
+ *classe responsavel por gerenciar a logica da partida e dos combates, controla
+ * os turnos de ataque, uso dos poderes especiais, itens, progressao das fases, 
+ * condicoes de vitorias/derrota e salvamento do progresso
  * @author vitoriamartins
  */
 public class ControllerPartida {
@@ -34,6 +36,12 @@ public class ControllerPartida {
     private final int faseMax = 5; 
     private final Connection conexao;
     
+    /**
+     * construtor da classe, inicializa a partida, define a fase inicial, obtem a 
+     * conexao via Singleton e prepara a lista de inimigos e o estado visual do heroi
+     * @param viewPartida
+     * @param jogador 
+     */
     public ControllerPartida(JFramePartida viewPartida, Jogador jogador){
         this.viewPartida = viewPartida;
         this.jogador = jogador;
@@ -41,6 +49,7 @@ public class ControllerPartida {
         this.faseAtual = 1;
         this.acao = "a batalha comecou! escolha sua acao";
         this.listaInimigos = new ArrayList<>();
+        //realiza a conexao global e de forma segura atraves do Singleton
         this.conexao = Conexao.getInstance();
             
         if(this.protagonista != null){
@@ -50,27 +59,51 @@ public class ControllerPartida {
         gerarInimigo();
         attVisual(); 
     }
-
+    
+    /**
+     * retorna o protagonista atualmente em jogo
+     * @return 
+     */
     public Protagonista getProtagonista() {
         return protagonista;
     }
-
+    
+    /**
+     * define o protagonista/heroi da partida
+     * @param protagonista 
+     */
     public void setProtagonista(Protagonista protagonista) {
         this.protagonista = protagonista;
     }
 
+    /**
+     * retorna a lista de inimigos da campanha
+     * @return 
+     */
     public ArrayList<Inimigo> getListaInimigos() {
         return listaInimigos;
     }
-
+    
+    /**
+     * define a lista de inimigos da partida
+     * @param listaInimigos 
+     */
     public void setListaInimigos(ArrayList<Inimigo> listaInimigos) {
         this.listaInimigos = listaInimigos;
     }
-
+    
+    /**
+     * retorna o numero da fase atual
+     * @return 
+     */
     public int getFaseAtual() {
         return faseAtual;
     }
-
+    
+    /**
+     * define a fase atual e recalcula a vida maxima do heroi atualizando a tela
+     * @param faseAtual 
+     */
     public void setFaseAtual(int faseAtual) {
         this.faseAtual = faseAtual;
         if(this.protagonista != null){
@@ -85,6 +118,10 @@ public class ControllerPartida {
         attVisual();
     }
     
+    /**
+     * retorna o inimigo correspondente a fase atual
+     * @return 
+     */
     public Inimigo getInimigoAtual(){
         int indice = this.faseAtual -1;
         if (indice >= 0 && indice < this.listaInimigos.size()){
@@ -93,27 +130,51 @@ public class ControllerPartida {
         return null;
     }
     
+    /**
+     * retorna a mensagem descritiva da acao durante a partida
+     * @return 
+     */
     public String getAcao(){
         return this.acao;
     }
     
+    /**
+     * retorna a janela da partida associada
+     * @return 
+     */
     public JFramePartida getViewPartida() {
         return viewPartida;
     }
-
+    
+    /**
+     * retorna o jogador associado a partida
+     * @return 
+     */
     public Jogador getJogador() {
         return jogador;
     }
     
+    /**
+     * verifica se toda a campanha foi concluidas (todas as fases vencidas)
+     * @return 
+     */
     public boolean isCampanhaConcluida(){
         return this.faseAtual > faseMax || (this.faseAtual == faseMax &&
                 getInimigoAtual() != null && getInimigoAtual().isDerrotado());
     }
     
+    /**
+     * verifica se o heroi foi derrotado
+     * @return 
+     */
     public boolean isGameOver(){
         return this.protagonista.isDerrotado() && this.protagonista != null;
     }
     
+    /**
+     * avanca para proxima fase aplicando o bonus de atributos ao heroi e concedendo
+     * recompensas de itens apos a vitoria sobre um inimigo
+     */
     public void proximaFase(){
         Inimigo derrotado = getInimigoAtual();
         
@@ -167,12 +228,18 @@ public class ControllerPartida {
         attVisual();
     }
     
+    /**
+     * gera a recompensa de itens ao vencer uma fase
+     * permitindo gerir o inventario caso esteja cheio
+     * @param inimigoDerrotado 
+     */
     public void concluirFaseVitoria(Inimigo inimigoDerrotado){
         Itens itemGanho = Itens.gerarItem();
         // guarda a info da fase anterior
         String acaoAnterior = this.acao;
         
         if(this.protagonista.getInventario().size() >= 3){
+            // recupera  a lista de itens do protagonista
             ArrayList<Itens> inv = this.protagonista.getInventario();
             String[] opcoesTroca = {
                 "substituir 1: " + inv.get(0).getNome(),
@@ -188,8 +255,12 @@ public class ControllerPartida {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                     opcoesTroca, opcoesTroca[0]);
             if (esc >= 0 && esc < 3){
+                //recupera o item armazenado naquela posicao que vai ser substituido
                 Itens itemDescartado = inv.get(esc);
+                //substitui o item da posicao escolhida pelo novo
                 inv.set(esc, itemGanho);
+                
+                // registra a troca 
                 this.acao = acaoAnterior + " |trocou " + 
                         itemDescartado.getNome() + " por " 
                         + itemGanho.getNome();
@@ -197,14 +268,20 @@ public class ControllerPartida {
                 this.acao = acaoAnterior + " |manteve o inventario atual";
             }
             
+            // registra a vitoria do heroi
             this.protagonista.regVitoria(inimigoDerrotado);
         }else{
+            // registra o recebimento do novo item
             this.protagonista.ganharItemInimigo(inimigoDerrotado, itemGanho);
             this.acao = acaoAnterior + " |voce ganhou um novo item " +
                     itemGanho.getNome();
         }
     }
     
+    /**
+     * executa a acao de ataque basico do heroi/protagonista contra o inimigo atual
+     * provocando o contra-ataque do inimigo caso ainda esteja vivo 
+     */
     public void execAtaque(){
         if(isGameOver()){
             this.acao = "GAME OVER, voce foi derrotado :(";
@@ -236,6 +313,9 @@ public class ControllerPartida {
         }  
     }
     
+    /**
+     * executa a habilidade de poder especial do protagonista contra o inimigo atual
+     */
     public void execPoderEspecial(){
         if(isGameOver()){
             this.acao = "GAME OVER, voce foi derrotado :(";
@@ -267,6 +347,11 @@ public class ControllerPartida {
         }
     }
     
+    /**
+     * permite ao jogador selecionar um item do inventario e utilizar durante a 
+     * partida
+     * @param indiceItem 
+     */
     public void usarItem(int indiceItem){
         if(isGameOver()){
             this.acao = "GAME OVER, voce foi derrotado :(";
@@ -275,6 +360,7 @@ public class ControllerPartida {
             return;
         }
         
+        // recupera o inventario do protagonista
         ArrayList<Itens> inv = this.protagonista.getInventario();
         
         //verificando se tem itens no inventario
@@ -283,19 +369,25 @@ public class ControllerPartida {
             attVisual();
             return;
         }
-            
+        // criando um vetor para armazenar os nomes e efeitos dos itens
         String[] nomeItens = new String[inv.size()];
+        //percorre o inventario e preenche o vetor
         for(int i = 0; i < inv.size(); i++){
             nomeItens[i] = inv.get(i).getNome() + " (Efeito: " + 
                     inv.get(i).getDesc()+ ")";
         }
         
+        // janela para o jogador escolher o item
         String itemEscolhido = (String) JOptionPane.showInputDialog(
                 this.viewPartida, "qual item quer usar: ", "usar item", 
                 JOptionPane.QUESTION_MESSAGE, null, nomeItens, nomeItens[0]);
         
+        //verifica se o jogador escolheu algum item
         if(itemEscolhido != null){
+            // inicializando o indice como invalido
             int indSelecionado = -1;
+            
+            // buscando a posicao do item escolhido no vetor
             for(int i=0; i < nomeItens.length; i++){
                 if(nomeItens[i].equals(itemEscolhido)){
                     indSelecionado = i;
@@ -303,12 +395,18 @@ public class ControllerPartida {
                 }
             }
             
+            // verifica se encontrou uma posicao valida
             if(indSelecionado != -1){
+                // recupera o inimigo da fase atual
                 Inimigo inimigo = getInimigoAtual();
+                // utiliza o item escolhido e recebe a desc do efeito
                 String efeitoItem = this.protagonista.usarItem(indSelecionado);
                 
+                // verificando se existe um inimigo que ainda nao foi derrotado
                 if(inimigo != null && !inimigo.isDerrotado()){
+                    // o inimigo contra-ataca
                     inimigo.atacar(this.protagonista);
+                    // registra a utilizacao do item e o contra-ataque
                     this.acao = efeitoItem + " | o " + inimigo.getNome() + " "
                             + "contra-atacou";
                     verificaDerrotaHeroi();
@@ -321,6 +419,10 @@ public class ControllerPartida {
         }
     }
     
+    /**
+     * executa a acao de defesa do protagonista reduzindo o dano recebido pelo 
+     * ataque do inimigo
+     */
     public void defender(){
         if(isGameOver()){
             this.acao = "GAME OVER, voce foi derrotado :((";
@@ -351,6 +453,10 @@ public class ControllerPartida {
         }
     }
     
+    /**
+     * define o comportamento de ataque do inimigo durante o turno 
+     * @param inimigo 
+     */
     public void turnoInimigoAtaca(Inimigo inimigo){
         Random random = new Random();
         
@@ -366,6 +472,9 @@ public class ControllerPartida {
         }
     }
     
+    /**
+     * verifica se o heroi foi derrotado e atualiza o estado da partida
+     */
     private void verificaDerrotaHeroi(){
         if(isGameOver()){
             this.acao = "voce foi derrotado, GAME OVER :((";
@@ -373,6 +482,9 @@ public class ControllerPartida {
         }
     }
     
+    /**
+     * desativa os botoes de acao na interface grafica quando a partida termina
+     */
     private void desativarBtn(){
         if(this.viewPartida != null){
             this.viewPartida.getBtnAtacar().setEnabled(false);
@@ -382,26 +494,37 @@ public class ControllerPartida {
         }
     }
     
+    /**
+     * atualiza os componentes visuais da tela da partida
+     * (barras de vida, texto de acoes, niveis e fases)
+     */
     private void attVisual(){
+
         if(this.viewPartida != null){
             if(this.protagonista != null){
+                // atualizando a imagem de acordo com a classe do heroi
                 this.viewPartida.mostrarPersonagem
                     (this.protagonista.getClass().getSimpleName());
                 this.viewPartida.getNmPersonagem().
                         setText(this.protagonista.getNome());
-                this.viewPartida.getNvHeroi().setText("nivel: " + this.protagonista.getNivel());
+                this.viewPartida.getNvHeroi().setText("nivel: " + 
+                        this.protagonista.getNivel());
                 this.viewPartida.getNumFase().setText("fase: " + this.faseAtual);
                 
+                // captura a vida atual e impede o valor negativo 
                 int vidaHero = (int) Math.max(0, this.protagonista.getVida());
+                // definindo o valor maximo da barra de vida do heroi
                 this.viewPartida.getVdHeroi().setMaximum(this.vdInHeroi);
+                // atualiza o preenchimento da barra de vida
                 this.viewPartida.getVdHeroi().setValue(vidaHero);
+                // atualiza o txt com a vida atual e vida maxima
                 this.viewPartida.getQtdVidaH().setText(vidaHero + "/" + this.vdInHeroi);
             }
-            
+            // recupera o inimigo da fase atual
             Inimigo inimigoAtual = getInimigoAtual();
             
             if(inimigoAtual != null){
-                
+                // atualiza a imagem do inimigo
                 this.viewPartida.mostrarInimigo(inimigoAtual.getNome());
                 
                 int vidaInimigo = (int) Math.max(0, inimigoAtual.getVida());
@@ -411,14 +534,22 @@ public class ControllerPartida {
                 this.viewPartida.getVdInimigo().setValue(vidaInimigo);
                 this.viewPartida.getQtdVidaI().setText(vidaInimigo + "/" + this.vdInInimigo);
             }else{
+                //limpa a imagem quando nao existe inimigo atual
                 this.viewPartida.mostrarInimigo("");
+                // indica o inimigo que foi derrotado
                 this.viewPartida.getNmInimigo().setText("Derrotado");
+                // zera o txt que representa a vida do inimigo
                 this.viewPartida.getQtdVidaI().setText("0 / 0");
             }
+            // atualiza a ultma acao
             this.viewPartida.getAcao().setText(this.acao);
         }
     }
     
+    /**
+     * instancia e gera a lista dos inimigos da campanha em ordem crescente de 
+     * dificuldade
+     */
     public void gerarInimigo(){
         
         if(this.listaInimigos == null){
@@ -438,6 +569,9 @@ public class ControllerPartida {
         }
     }
     
+    /**
+     * fecha a tela da partida atual e retorna ao menu principal
+     */
     public void voltarMenu(){
         this.viewPartida.setVisible(false);
         JFrameMenuJogo telaMenu = new JFrameMenuJogo();
@@ -447,6 +581,10 @@ public class ControllerPartida {
         telaMenu.setVisible(true);
     }
     
+    /**
+     * abre o menu de pause e da as opcoes de continuar, salvar o jogo com um nome
+     *  ou abandonar a sessao para retornar ao menu principal
+     */
     public void pause() {
         String[] opcoes = {
             "continuar", "salvar partida", "menu principal"

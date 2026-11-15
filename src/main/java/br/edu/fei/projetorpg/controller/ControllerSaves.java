@@ -31,41 +31,76 @@ import javax.swing.table.DefaultTableModel;
 public class ControllerSaves {
     JFrameSaves viewSaves;
     Jogador jogador;
-    private Connection conexao;
+    private final Connection conexao;
     
-    
+    /**
+     * inicializa o controlador de saves associando a interface grafica e o jogador
+     * recebido, alem de obter a conexao com o banco de dados
+     * @param viewSaves
+     * @param jogador 
+     */
     public ControllerSaves(JFrameSaves viewSaves, Jogador jogador){
         this.viewSaves = viewSaves;
         this.jogador = jogador;
         this.conexao = Conexao.getInstance();
         
     }
-    
+    /**
+     * inicializa o controlador utilizando uma conexao com o bd
+     * @param conexao 
+     */
     public ControllerSaves(Connection conexao){
         this.conexao = conexao;
     }
 
+    /**
+     * retorna a janela de saves
+     * @return 
+     */
     public JFrameSaves getViewSaves() {
         return viewSaves;
     }
-
+    
+    /**
+     * define a janela de saves 
+     * @param viewSaves 
+     */
     public void setViewSaves(JFrameSaves viewSaves) {
         this.viewSaves = viewSaves;
     }
-
+    
+    /**
+     * retorna o jogador associado a sessao de saves
+     * @return 
+     */
     public Jogador getJogador() {
         return jogador;
     }
-
+    
+    /**
+     * define o jogador associado a este controlador
+     * @param jogador 
+     */
     public void setJogador(Jogador jogador) {
         this.jogador = jogador;
     }
     
+    /**
+     * salva o estado atual da partida no banco de dados e verifica se já existe 
+     * um save com o mesmo nome para evitar duplicados, concatena os inimigos 
+     * derrotados numa string e guarda os dados do protagonista
+     * @param protagonista
+     * @param faseAtual
+     * @param nomeSave
+     * @param tipoClasse
+     * @param vdInimigoAtual 
+     */
     public void salvarPartida(Protagonista protagonista, int faseAtual, 
             String nomeSave, String tipoClasse, int vdInimigoAtual){
         try{
             SaveDAO saveDAO = new SaveDAO(this.conexao);
             
+            // verifica se já existe um save gravado com o nome fornecido
             if(saveDAO.existeSaveNome(nomeSave)){
                 JOptionPane.showMessageDialog(null, 
                         "existe um jogo salvo com o nome " + nomeSave + 
@@ -76,6 +111,7 @@ public class ControllerSaves {
             
             String nomesInimigos = "";
             
+            // concatena os nomes dos inimigos derrotados  numa string separando por virgulas
             for(Inimigo inimigo: protagonista.getAdvDerrotados()){
                 nomesInimigos += inimigo.getNome() + ",";
             }
@@ -92,6 +128,10 @@ public class ControllerSaves {
         }   
     }
     
+    /**
+     * consulta todos os saves guardados na base de dados e popula a tabela
+     * limpa a tabela antes de carregar para evitar duplicações
+     */
     public void mostraSaves(){
         try{
             SaveDAO saveDAO = new SaveDAO(this.conexao);
@@ -127,6 +167,12 @@ public class ControllerSaves {
         }
     }
     
+    /**
+     * carrega um save específico a partir do seu nome restaurando o protagonista
+     * (com a respectiva classe, vida, nível e inventário) a fase e o
+     * estado do inimigo atual abrindo em seguida a tela da partida.
+     * @param nomeSave 
+     */
     public void carregarSave(String nomeSave){
         try{
             SaveDAO saveDAO = new SaveDAO(this.conexao);
@@ -144,7 +190,7 @@ public class ControllerSaves {
                 String classeTratada = (tipoClasse != null) ? tipoClasse.
                         toLowerCase().trim():"";
                 int vidaInimigoSalva = rs.getInt("vida_inim_atual");
-                
+                // instancia a classe correta do heroi com base na classe guardada
                 switch(classeTratada){
                     case "arqueiro":
                         p = new Arqueiro(nomeHeroi);
@@ -159,7 +205,7 @@ public class ControllerSaves {
                         JOptionPane.showMessageDialog(this.viewSaves, "erro: "
                                 + "classe desconhecida '" + tipoClasse + "'", 
                                 "erro", JOptionPane.ERROR_MESSAGE);
-                        return; //sai do metodo
+                        return; //sai do metodo se a classe for invalida
                 }
                 
                 if(p != null){
@@ -182,7 +228,7 @@ public class ControllerSaves {
                     }
                     
                     this.jogador.setPersonagemOn(p);
-                    
+                    // fecha a janela de saves e abre a tela de partida com os dados carregados
                     this.viewSaves.setVisible(false);
                     JFramePartida viewPartida = new JFramePartida();
                     ControllerPartida ctrPartida = new ControllerPartida(
@@ -204,7 +250,7 @@ public class ControllerSaves {
                     + " carregado com sucesso");
                 }
                 
-                //lista de inimigos derrotados
+                // restaura a lista de inimigos derrotados a partir da string guardada
                 String inimigos = rs.getString("inim_der");
                 ArrayList<Inimigo> listCarregada = new ArrayList<>();
                 
@@ -233,6 +279,10 @@ public class ControllerSaves {
         }
     }
     
+    /**
+     * mostra uma caixa de diálogo solicitando ao jogador o nome do save
+     * que deseja carregar acionando o método de carregamento caso seja válido
+     */
     public void saveEscolhido(){
         try{
             String nomeSave = JOptionPane.showInputDialog(this.viewSaves,
@@ -254,6 +304,9 @@ public class ControllerSaves {
         }
     }
     
+    /**
+     * fecha a janela de saves atual e retorna ao menu principal
+     */
     public void menu(){
         this.viewSaves.setVisible(false);
         JFrameMenuJogo telaMenu = new JFrameMenuJogo();

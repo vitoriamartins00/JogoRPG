@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
- * Classe responsável pela lógica de autenticação e validação dos dados inseridos
+ * classe responsável pela lógica de autenticação e validação dos dados inseridos
  * no banco de dados através do cadastro e faz a transição para o menu principal 
  * ou tela de cadastro
  * @author vitoriamartins
@@ -28,8 +28,8 @@ public class ControllerLogin {
     private Connection conexao;
     
     /**
-     * Construtor da classe ControllerLogin
-     * Inicializa o controlador, obtém a instancia única da conexao e instancia 
+     * construtor da classe ControllerLogin
+     * inicializa o controlador, obtém a instancia única da conexao e instancia 
      * o DAO de jogadores
      * @param viewLogin
      * @param jogador 
@@ -42,7 +42,7 @@ public class ControllerLogin {
     }
     
     /**
-     * Retorna o jogador associado ao controlador 
+     * retorna o jogador associado ao controlador 
      * @return 
      */
     public Jogador getJogador() {
@@ -50,7 +50,7 @@ public class ControllerLogin {
     }
     
     /**
-     * Retorna a tela de login controlada por esta classe
+     * retorna a tela de login controlada por esta classe
      * @return 
      */
     public JFrameLogin getViewLogin() {
@@ -58,7 +58,7 @@ public class ControllerLogin {
     }
     
     /**
-     * Valida os dados inseridos nos campos usuario e senha, também é responsável
+     * valida os dados inseridos nos campos usuario e senha, também é responsável
      * por verificar se os campos estão preenchidos e consultar consultar o 
      * banco de dados para validacao do login, se validas abre a pagina do menu jogo
      */
@@ -107,7 +107,7 @@ public class ControllerLogin {
     }
     
     /**
-     * Fecha a pagina de login e abre a pagina de cadastro de novos jogadores, 
+     * fecha a pagina de login e abre a pagina de cadastro de novos jogadores, 
      * inicializando o controlador cadastro
      */
     public void irCadastrar(){

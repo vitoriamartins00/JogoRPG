@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
- * Classe responsavel pela conexao entre a interface (JFrameCadastro) e a 
+ * classe responsavel pela conexao entre a interface (JFrameCadastro) e a 
  * persistência (JogadorDAO)
  * @author vitoriamartins
  */
@@ -23,7 +23,7 @@ public class ControllerCadastro {
     private Jogador jogador;
     
     /**
-     * Construtor da classe ControllerCadastro
+     * construtor da classe ControllerCadastro
      * responsável por inicializar o controlador à tela de cadastro
      * @param viewCadastro 
      */
@@ -32,7 +32,7 @@ public class ControllerCadastro {
     }
     
     /**
-     * Responsável pela validação e cadastro de um novo jogador/usuário. Captura 
+     * responsável pela validação e cadastro de um novo jogador/usuário captura 
      * os dados inseridos, e valida se estão preenchidos, cria a ligacao com o 
      * banco de dados através do padrão Singleton e insere o cadastro, caso o 
      * cadastro seja efetivo, redireciona o jogador a tela de login
@@ -78,7 +78,7 @@ public class ControllerCadastro {
     }
     
     /**
-     * Fecha a pagina de cadastro e abre a pagina de login, 
+     * fecha a pagina de cadastro e abre a pagina de login, 
      * instanciando o controlador de login 
      */
     
