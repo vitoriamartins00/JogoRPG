@@ -494,6 +494,49 @@ public class ControllerPartida {
         }
     }
     
+    public void mostrarPersonagem(String classe){
+        String caminho = "/img/" + classe.toLowerCase().trim() + ".png";
+        
+        System.out.println("procurando imagem: " + caminho);
+        
+        java.net.URL url = getClass().getResource(caminho);
+        
+        if(url != null){
+            javax.swing.ImageIcon img = new javax.swing.ImageIcon(url);
+            
+            java.awt.Image tamConfig = img.getImage().getScaledInstance
+                (this.viewPartida.getLbPersonagem().getWidth(),
+                        this.viewPartida.getLbPersonagem().getHeight(), 
+                        java.awt.Image.SCALE_SMOOTH);
+            
+            this.viewPartida.getLbPersonagem().setIcon(new javax.swing.ImageIcon(tamConfig));
+            System.out.println("imagem encontrada");
+        }else{
+            this.viewPartida.getLbPersonagem().setIcon(null);
+            System.out.println("imagem nao encontrada: " + caminho);
+        }
+    }
+    
+    public void mostrarInimigo(String nomeInimigo){
+        String caminho = "/img/" + nomeInimigo.toLowerCase().trim() + ".png";
+        
+        java.net.URL url = getClass().getResource(caminho);
+        
+        if(url != null){
+            javax.swing.ImageIcon imagem = new javax.swing.ImageIcon(url);
+            java.awt.Image ajustada = imagem.getImage().getScaledInstance
+                (this.viewPartida.getLbInimigo().getWidth(), 
+                        this.viewPartida.getLbInimigo().getHeight(), 
+                        java.awt.Image.SCALE_SMOOTH);
+            this.viewPartida.getLbInimigo().setIcon(new javax.swing.ImageIcon(ajustada));
+            
+        }else{
+            this.viewPartida.getLbInimigo().setIcon(null);
+            System.out.println("imagem nao encontrada: " + caminho);
+        }
+    }
+
+    
     /**
      * atualiza os componentes visuais da tela da partida
      * (barras de vida, texto de acoes, niveis e fases)
@@ -503,8 +546,7 @@ public class ControllerPartida {
         if(this.viewPartida != null){
             if(this.protagonista != null){
                 // atualizando a imagem de acordo com a classe do heroi
-                this.viewPartida.mostrarPersonagem
-                    (this.protagonista.getClass().getSimpleName());
+                mostrarPersonagem(this.protagonista.getClass().getSimpleName());
                 this.viewPartida.getNmPersonagem().
                         setText(this.protagonista.getNome());
                 this.viewPartida.getNvHeroi().setText("nivel: " + 
@@ -525,7 +567,7 @@ public class ControllerPartida {
             
             if(inimigoAtual != null){
                 // atualiza a imagem do inimigo
-                this.viewPartida.mostrarInimigo(inimigoAtual.getNome());
+                mostrarInimigo(inimigoAtual.getNome());
                 
                 int vidaInimigo = (int) Math.max(0, inimigoAtual.getVida());
                 
@@ -535,9 +577,11 @@ public class ControllerPartida {
                 this.viewPartida.getQtdVidaI().setText(vidaInimigo + "/" + this.vdInInimigo);
             }else{
                 //limpa a imagem quando nao existe inimigo atual
-                this.viewPartida.mostrarInimigo("");
+                mostrarInimigo("");
                 // indica o inimigo que foi derrotado
                 this.viewPartida.getNmInimigo().setText("Derrotado");
+                // zera a barra de vida do inimigo
+                this.viewPartida.getVdInimigo().setValue(0);
                 // zera o txt que representa a vida do inimigo
                 this.viewPartida.getQtdVidaI().setText("0 / 0");
             }

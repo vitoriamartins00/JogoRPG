@@ -29,45 +29,6 @@ public class JFramePartida extends javax.swing.JFrame {
         this.setResizable(false);
     }
     
-    public void mostrarPersonagem(String classe){
-        String caminho = "/img/" + classe.toLowerCase().trim() + ".png";
-        
-        System.out.println("procurando imagem: " + caminho);
-        
-        java.net.URL url = getClass().getResource(caminho);
-        
-        if(url != null){
-            javax.swing.ImageIcon img = new javax.swing.ImageIcon(url);
-            
-            java.awt.Image tamConfig = img.getImage().getScaledInstance
-                (lbPersonagem.getWidth(),lbPersonagem.getHeight(), 
-                        java.awt.Image.SCALE_SMOOTH);
-            
-            lbPersonagem.setIcon(new javax.swing.ImageIcon(tamConfig));
-            System.out.println("imagem encontrada");
-        }else{
-            System.out.println("imagem nao encontrada: " + caminho);
-        }
-    }
-    
-    public void mostrarInimigo(String nomeInimigo){
-        String caminho = "/img/" + nomeInimigo.toLowerCase().trim() + ".png";
-        
-        java.net.URL url = getClass().getResource(caminho);
-        
-        if(url != null){
-            javax.swing.ImageIcon imagem = new javax.swing.ImageIcon(url);
-            java.awt.Image ajustada = imagem.getImage().getScaledInstance
-                (lbInimigo.getWidth(), lbInimigo.getHeight(), 
-                        java.awt.Image.SCALE_SMOOTH);
-            lbInimigo.setIcon(new javax.swing.ImageIcon(ajustada));
-            
-        }else{
-            lbInimigo.setIcon(null);
-            System.out.println("imagem nao encontrada: " + caminho);
-        }
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
