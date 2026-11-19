@@ -6,7 +6,7 @@
 package br.edu.fei.projetorpg.model;
 
 /**
- * Classe abstrata que representa os personagens do jogo,
+ * classe abstrata que representa os personagens do jogo,
  * armazenando seus atributos básicos e definindo os métodos
  * comuns de combate, dano e verificação de derrota.
  *
