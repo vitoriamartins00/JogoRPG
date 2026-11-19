@@ -38,7 +38,7 @@ Para rodar o proojeto em seu ambiente local siga os passos abaixo:
  - Passo 1: Instale o JDK 26, o Apache NetBeans e o PostgresSQL, necessários para a compilação, execução e persistência dos dados do projeto
  - Passo 2: Clone o repositório utilizando o git e abra a pasta do ProjetoRPG no Apache NetBeans.
  - Passo 3: No PostgresSQL, crie o banco de dados chamado feirpg. Em seguida, execute o arquivo schema.sql, localizado na pasta raiz do projeto para criar as tabelas utilizadas no projeto.
- - Passo 4: Confira as informações de conexão no arquivo .env que fica localizado na pasta raiz do projeto, verifique o endereço, a porta, o nome do banco, o usuário e a senha, de acordo com a configuração local do PostgresSQL.
+ - Passo 4: Crie o arquivo .env na na pasta raiz do projeto. O arquivo deve ter 3 variaveis: DB_URL que deve conter o seguinte formato jdbc:postgresql://<servidor>:<porta>/<nome_servidor>, DB_USER deve conter o nome do usuario do banco de dados que no Postgres geralmente é "postgres", e a senha de acesso ao banco de dado DB_PASSWORD.
  - Passo 5: Certifique-se de que o PostgresSQL esteja em execução e que o banco de dados foi criado corretamente. No NetBeans, construa o projeto e verifique se não há nenhum erro.
  - Passo 6: Execute a classe main ProjetoRPG.java pelo Netbeans. Após a inicializaçaão, o sistema estará disponível para utilização.
 
